@@ -3,15 +3,40 @@ const express = require('express');
 const app = express();
 app.use(express.urlencoded({extended: true})) 
 
+//mongodb 연결
+var db;
+const MongoClient = require('mongodb').MongoClient
+MongoClient.connect('mongodb+srv://jeongin:wjddls0307@cluster0.u06t4.mongodb.net/myFirstDatabase?retryWrites=true&w=majority', function(에러, client){
+if(에러){
+    return console.log(에러)
+}
+db = client.db('todoapp');
+
+//db에 자료 저장하기
+//저장할 자료는 object 형식으로 ex) {이름: 'Test', 나이: 20}
+/*db.collection('post').insertOne({이름: 'John', 나이: 20, _id: 100}, function(에러, 결과){ //post라는 collection에 insertOne
+    console.log('저장완료');
+});*/
+
+//연결 성공시
+app.listen(8080, function(){
+        console.log('listening on 8080');
+     });
+
+
+//숙제: 어떤 사람이 /add라는 경로로 post 요청을 하면, data 2개를 보내주는데 (제목, 날짜 데이터) 이때 post라는 이름을 가진 collection에 두 개 데이터 저장하기
+//{ 제목: '어쩌구', 날짜: '어쩌구'}
+app.post('/add', function(req, res){
+    db.collection('post').insertOne({제목: req.body.title , 날짜: req.body.date, _id: 1200}, function(에러, 결과){ //post라는 collection에 insertOne
+        res.send("제목: " + req.body.title + " 날짜: " + req.body.date + "\n저장 완료");
+    });;
+});
+
+});
 /*
 2021년 이후로 설치한 프로젝트들은 body-parser 라이브러리가 express에 기본 포함되어있어서 따로 npm으로 설치할 필요가 없으므로 아래 두 줄 대신 "app.use(express.urlencoded({extended: true}))" 써줌
 const bodyParser= require('body-parser')
 app.use(bodyParser.urlencoded({extended: true})) */
-
-
-app.listen(8080, function(){
-   console.log('listening on 8080');
-});
 
 //get 
 app.get('/pet', function(req, res){
@@ -30,8 +55,3 @@ app.get('/', function(req, res){
 app.get('/write', function(req, res){
     res.sendFile(__dirname + '/write.html');
  });
-
- app.post('/add', function(req, res){
-    console.log(req.body);
-    res.send('전송완료')
-  });
