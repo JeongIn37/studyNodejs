@@ -12,6 +12,9 @@ if(에러){
 }
 db = client.db('todoapp');
 
+//ejs 설치
+app.set('view engine', 'ejs');
+
 //db에 자료 저장하기
 //저장할 자료는 object 형식으로 ex) {이름: 'Test', 나이: 20}
 /*db.collection('post').insertOne({이름: 'John', 나이: 20, _id: 100}, function(에러, 결과){ //post라는 collection에 insertOne
@@ -27,7 +30,7 @@ app.listen(8080, function(){
 //숙제: 어떤 사람이 /add라는 경로로 post 요청을 하면, data 2개를 보내주는데 (제목, 날짜 데이터) 이때 post라는 이름을 가진 collection에 두 개 데이터 저장하기
 //{ 제목: '어쩌구', 날짜: '어쩌구'}
 app.post('/add', function(req, res){
-    db.collection('post').insertOne({제목: req.body.title , 날짜: req.body.date, _id: 1200}, function(에러, 결과){ //post라는 collection에 insertOne
+    db.collection('post').insertOne({제목: req.body.title , 날짜: req.body.date}, function(에러, 결과){ //post라는 collection에 insertOne
         res.send("제목: " + req.body.title + " 날짜: " + req.body.date + "\n저장 완료");
     });;
 });
@@ -55,3 +58,12 @@ app.get('/', function(req, res){
 app.get('/write', function(req, res){
     res.sendFile(__dirname + '/write.html');
  });
+
+ //list를 get 요청으로 접속하면 (실제 db에 저장된 데이터들로 예쁘게 꾸며진) html을 보여줌
+ app.get('/list', function(req, res){
+     db.collection('post').find().toArray(function(err, result){
+         console.log(result);     res.render('list.ejs', { posts: result });
+         res.render('list.ejs', { posts: result });
+     });
+     //db에 저장된 post라는 collection 안의 모든 데이터를 꺼내주세요
+ })
