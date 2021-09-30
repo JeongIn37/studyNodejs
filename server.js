@@ -30,9 +30,20 @@ app.listen(8080, function(){
 //숙제: 어떤 사람이 /add라는 경로로 post 요청을 하면, data 2개를 보내주는데 (제목, 날짜 데이터) 이때 post라는 이름을 가진 collection에 두 개 데이터 저장하기
 //{ 제목: '어쩌구', 날짜: '어쩌구'}
 app.post('/add', function(req, res){
-    db.collection('post').insertOne({제목: req.body.title , 날짜: req.body.date}, function(에러, 결과){ //post라는 collection에 insertOne
+    db.collection('counter').findOne({ name: '게시물개수'}, function(err, result){
+        var totalPost = result.totalPost;
+    db.collection('post').insertOne({제목: req.body.title , 날짜: req.body.date, _id: totalPost + 1}, function(에러, 결과){ //post라는 collection에 insertOne
+        //counter collection의 totalPost도 1 증가시키기
+        //1. 어떤 데이터를 수정할지, 수정값(operator: ~), function()
+        db.collection('counter').updateOne({name:'게시물개수'}, { $inc : {totalPost:1} }, function(err, result){
+            if(err){
+                console.log(err)
+            }
         res.send("제목: " + req.body.title + " 날짜: " + req.body.date + "\n저장 완료");
-    });;
+
+        })
+    });
+   });;
 });
 
 });
@@ -62,8 +73,8 @@ app.get('/write', function(req, res){
  //list를 get 요청으로 접속하면 (실제 db에 저장된 데이터들로 예쁘게 꾸며진) html을 보여줌
  app.get('/list', function(req, res){
      db.collection('post').find().toArray(function(err, result){
-         console.log(result);     res.render('list.ejs', { posts: result });
-         res.render('list.ejs', { posts: result });
+         console.log(result);
+        res.render('list.ejs', { posts: result });
      });
      //db에 저장된 post라는 collection 안의 모든 데이터를 꺼내주세요
  })
