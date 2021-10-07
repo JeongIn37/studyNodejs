@@ -78,3 +78,13 @@ app.get('/write', function(req, res){
      });
      //db에 저장된 post라는 collection 안의 모든 데이터를 꺼내주세요
  })
+
+ app.delete('/delete', function(req, res){
+    console.log(req.body);
+    req.body._id = parseInt(req.body._id); //id가 string으로 넘어가서 int로 변환해줌
+    //req.body에 담겨온 게시물 번호를 가진 글을 db에서 찾아서 삭제해주세요
+    db.collection('post').deleteOne(req.body, function(err, result){
+        console.log('삭제완료');
+        res.status(200).send({ message : "성공했습니다"});
+    })
+ })
