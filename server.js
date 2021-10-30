@@ -15,6 +15,9 @@ db = client.db('todoapp');
 //ejs 설치
 app.set('view engine', 'ejs');
 
+//css 파일 추가
+app.use('/public', express.static('public'));
+
 //db에 자료 저장하기
 //저장할 자료는 object 형식으로 ex) {이름: 'Test', 나이: 20}
 /*db.collection('post').insertOne({이름: 'John', 나이: 20, _id: 100}, function(에러, 결과){ //post라는 collection에 insertOne
@@ -63,12 +66,12 @@ app.get('/beauty', function(req, res){
 });
 
 app.get('/', function(req, res){
-   res.sendFile(__dirname + '/index.html');
+    res.render('index.ejs');
 });
 
 app.get('/write', function(req, res){
-    res.sendFile(__dirname + '/write.html');
- });
+    res.render('write.ejs');
+});
 
  //list를 get 요청으로 접속하면 (실제 db에 저장된 데이터들로 예쁘게 꾸며진) html을 보여줌
  app.get('/list', function(req, res){
@@ -91,6 +94,9 @@ app.get('/write', function(req, res){
 
  app.get('/detail/:id', function(req, res){
     db.collection('post').findOne({ _id : parseInt(req.params.id) }, function(err, result){
+        if(err){
+            console.log(err)
+        }
         console.log(result);
         res.render('detail.ejs', { data : result });
     })
