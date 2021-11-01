@@ -101,3 +101,13 @@ app.get('/write', function(req, res){
         res.render('detail.ejs', { data : result });
     })
  })
+
+ app.get('/edit/:id', function(req, res){
+    db.collection('post').findOne({ _id : parseInt(req.params.id) }, function(err, result){
+        if(err){
+            console.log(err)
+        }
+        console.log(result);
+        res.render('edit.ejs', { post : result });
+    })
+});
