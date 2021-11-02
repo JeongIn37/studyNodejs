@@ -24,6 +24,10 @@ app.use('/public', express.static('public'));
     console.log('저장완료');
 });*/
 
+const methodOverride = require('method-override')
+app.use(methodOverride('_method'))
+
+
 //연결 성공시
 app.listen(8080, function(){
         console.log('listening on 8080');
