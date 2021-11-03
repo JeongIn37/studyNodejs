@@ -3,6 +3,9 @@ const express = require('express');
 const app = express();
 app.use(express.urlencoded({extended: true})) 
 
+const methodOverride = require('method-override')
+app.use(methodOverride('_method'))
+
 //mongodb 연결
 var db;
 const MongoClient = require('mongodb').MongoClient
@@ -17,10 +20,6 @@ app.set('view engine', 'ejs');
 
 //css 파일 추가
 app.use('/public', express.static('public'));
-
-//method-override 추가하기
-const methodOverride = require('method-override');
-app.use(methodOverride('_method'));
 
 //db에 자료 저장하기
 //저장할 자료는 object 형식으로 ex) {이름: 'Test', 나이: 20}
@@ -119,19 +118,11 @@ app.get('/write', function(req, res){
     })
 });
 
-/*app.put('/edit',function(req, res){
-    //폼에 담긴 제목 날짜 데이터를 가지고 db.collection에 업데이트 함
-    //updateOne(어떤것을수정할지, 수정값, 콜백함수)
-    //$set: 업데이트(없을 경우 생성)하도록 하는 operator 
-    db.collection('post').updateOne({_id : parseInt(req.body.id) }, { $set : { 제목: req.body.title, 날짜: req.body.date } }, function(){
-        console.log('수정완료');
-        res.redirect('/list');
-    })
-})*/
 
-app.put('/edit/:id', function(요청, 결과){
-  db.collection('post').updateOne( {_id : parseInt(요청.body.id) }, {$set : { 제목 : 요청.body.title , 날짜 : 요청.body.date }}, function(){
-    console.log('수정완료')
-    응답.redirect('/list')
+app.put('/edit', function(req, res){
+    db.collection('post').updateOne( {_id : parseInt(req.body.id) }, {$set : { 제목 : req.body.title , 날짜 : req.body.date }}, function(){
+      console.log('수정완료')
+      res.redirect('/list')
+    });
   });
-});
+  
